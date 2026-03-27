@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonia's PSLE Math Speed Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1a2e;
+    --card: #16213e;
+    --accent1: #f7c59f;
+    --accent2: #e84545;
+    --accent3: #53d8fb;
+    --accent4: #a8ff78;
+    --accent5: #ffdd59;
+    --text: #fffffe;
+    --muted: #a7a9be;
+    --radius: 18px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(247,197,159,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(83,216,251,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 40% 70%, rgba(168,255,120,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,221,89,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 90%, rgba(232,69,69,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #app {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 680px;
+    padding: 20px;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── HOME ── */
+  #home {
+    text-align: center;
+    animation: fadeSlideUp 0.6s ease;
+  }
+
+  .logo-area { margin-bottom: 24px; }
+
+  .star-row {
+    font-size: 2rem;
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+    animation: twinkle 2s infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.6; transform: scale(0.97); }
+    to   { opacity: 1;   transform: scale(1.02); }
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2.2rem, 6vw, 3.2rem);
+    background: linear-gradient(135deg, var(--accent1), var(--accent3), var(--accent4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 32px;
+  }
+
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .topic-btn {
+    background: var(--card);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    padding: 14px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .topic-btn .topic-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+  .topic-btn .topic-name { display: block; line-height: 1.3; }
+  .topic-btn .topic-desc { display: block; font-size: 0.75rem; font-weight: 600; margin-top: 2px; color: var(--muted); }
+
+  .topic-btn:hover,
+  .topic-btn.selected {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+  }
+
+  .topic-btn[data-color="orange"] { border-color: var(--accent1); }
+  .topic-btn[data-color="orange"]:hover,
+  .topic-btn[data-color="orange"].selected { background: rgba(247,197,159,0.12); }
+  .topic-btn[data-color="blue"] { border-color: var(--accent3); }
+  .topic-btn[data-color="blue"]:hover,
+  .topic-btn[data-color="blue"].selected { background: rgba(83,216,251,0.12); }
+  .topic-btn[data-color="green"] { border-color: var(--accent4); }
+  .topic-btn[data-color="green"]:hover,
+  .topic-btn[data-color="green"].selected { background: rgba(168,255,120,0.12); }
+  .topic-btn[data-color="yellow"] { border-color: var(--accent5); }
+  .topic-btn[data-color="yellow"]:hover,
+  .topic-btn[data-color="yellow"].selected { background: rgba(255,221,89,0.12); }
+  .topic-btn[data-color="red"] { border-color: var(--accent2); }
+  .topic-btn[data-color="red"]:hover,
+  .topic-btn[data-color="red"].selected { background: rgba(232,69,69,0.12); }
+  .topic-btn[data-color="pink"] { border-color: #e879f9; }
+  .topic-btn[data-color="pink"]:hover,
+  .topic-btn[data-color="pink"].selected { background: rgba(232,121,249,0.12); }
+
+  .difficulty-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .diff-btn {
+    background: var(--card);
+    border: 2px solid transparent;
+    border-radius: 50px;
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .diff-btn.selected,
+  .diff-btn:hover {
+    color: var(--text);
+    border-color: var(--accent3);
+    background: rgba(83,216,251,0.1);
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: none;
+    background: linear-gradient(135deg, #7c3aed, #e84545);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  }
+
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(124,58,237,0.6);
+  }
+
+  /* ── GAME ── */
+  #game { animation: fadeSlideUp 0.4s ease; }
+
+  .hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+
+  .hud-pill {
+    background: var(--card);
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .timer-ring {
+    width: 64px;
+    height: 64px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .timer-ring svg {
+    transform: rotate(-90deg);
+    width: 64px;
+    height: 64px;
+  }
+
+  /*
+   * FIX: r, cx, cy are SVG presentation attributes — NOT CSS properties.
+   * They belong on the <circle> elements in the HTML, not here in CSS.
+   * Removed from previous version to ensure cross-browser correctness.
+   */
+  .timer-ring circle {
+    fill: none;
+    stroke-width: 5;
+    stroke-dasharray: 163;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.1s linear, stroke 0.3s;
+  }
+
+  .timer-ring .bg-ring { stroke: var(--surface); }
+  .timer-ring .fg-ring { stroke: var(--accent4); stroke-dashoffset: 0; }
+
+  .timer-num {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: var(--surface);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent3), var(--accent4));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .question-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent3));
+  }
+
+  .q-topic {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .q-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .opt-btn {
+    background: var(--card);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 14px 12px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text);
+    transition: all 0.15s;
+    text-align: center;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--accent3);
+    background: rgba(83,216,251,0.1);
+    transform: scale(1.02);
+  }
+
+  .opt-btn.correct {
+    background: rgba(168,255,120,0.2);
+    border-color: var(--accent4);
+    color: var(--accent4);
+    animation: correctPop 0.4s ease;
+  }
+
+  .opt-btn.wrong {
+    background: rgba(232,69,69,0.2);
+    border-color: var(--accent2);
+    color: var(--accent2);
+    animation: shake 0.4s ease;
+  }
+
+  .opt-btn.reveal {
+    background: rgba(168,255,120,0.1);
+    border-color: rgba(168,255,120,0.4);
+    color: var(--accent4);
+  }
+
+  .opt-btn:disabled { cursor: default; }
+
+  @keyframes correctPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.07); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%       { transform: translateX(-6px); }
+    75%       { transform: translateX(6px); }
+  }
+
+  .feedback-bar {
+    text-align: center;
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    min-height: 40px;
+    transition: all 0.3s;
+  }
+
+  .feedback-bar.correct { background: rgba(168,255,120,0.15); color: var(--accent4); }
+  .feedback-bar.wrong   { background: rgba(232,69,69,0.15);   color: var(--accent2); }
+  .feedback-bar.timeout { background: rgba(255,221,89,0.15);  color: var(--accent5); }
+
+  /* ── RESULT ── */
+  #result {
+    text-align: center;
+    animation: fadeSlideUp 0.6s ease;
+  }
+
+  .result-emoji {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 12px;
+    animation: bounceIn 0.6s ease;
+  }
+
+  @keyframes bounceIn {
+    0%   { transform: scale(0) rotate(-10deg); opacity: 0; }
+    60%  { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(1) rotate(0);      opacity: 1; }
+  }
+
+  .result-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--accent1), var(--accent5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .result-score {
+    font-size: 1.1rem;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 16px 10px;
+    border: 1.5px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .review-section {
+    text-align: left;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 24px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .review-section h3 {
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .review-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .review-item:last-child { border-bottom: none; }
+  .review-icon { flex-shrink: 0; font-size: 1rem; margin-top: 1px; }
+  .review-q    { color: var(--text);   font-weight: 600; }
+  .review-ans  { color: var(--muted);  font-size: 0.8rem; margin-top: 2px; }
+  .review-ans .correct-ans { color: var(--accent4); font-weight: 700; }
+
+  .btn-row { display: flex; gap: 10px; }
+
+  .btn-secondary {
+    flex: 1;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: 2px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent3);
+    background: rgba(83,216,251,0.08);
+  }
+
+  .btn-primary {
+    flex: 2;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: none;
+    background: linear-gradient(135deg, #7c3aed, #e84545);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.3);
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(124,58,237,0.5);
+  }
+
+  /* ── SHARED ANIMATIONS ── */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── COMBO FLASH ── */
+  .combo-flash {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Fredoka One', cursive;
+    font-size: 3rem;
+    color: var(--accent5);
+    pointer-events: none;
+    z-index: 999;
+    animation: comboAnim 0.8s ease forwards;
+    text-shadow: 0 0 30px rgba(255,221,89,0.8);
+    white-space: nowrap;
+  }
+
+  @keyframes comboAnim {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    40%  { opacity: 1; transform: translate(-50%, -70%) scale(1.15); }
+    70%  { opacity: 1; transform: translate(-50%, -80%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -100%) scale(0.8); }
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ── HOME SCREEN ── -->
+  <div id="home" class="screen active">
+    <div class="logo-area">
+      <div class="star-row">&#11088; &#127919; &#11088;</div>
+      <h1>PSLE Math<br>Speed Challenge</h1>
+      <p class="subtitle">Sonia's P6 Exam Prep &middot; 10 Questions &middot; Beat the Clock!</p>
+    </div>
+
+    <div class="topic-grid" id="topicGrid">
+      <button class="topic-btn selected" data-topic="mixed" data-color="orange">
+        <span class="topic-icon">&#127922;</span>
+        <span class="topic-name">Mixed Topics</span>
+        <span class="topic-desc">All P6 syllabus</span>
+      </button>
+      <button class="topic-btn" data-topic="algebra" data-color="blue">
+        <span class="topic-icon">&#128292;</span>
+        <span class="topic-name">Algebra</span>
+        <span class="topic-desc">Letters &amp; expressions</span>
+      </button>
+      <button class="topic-btn" data-topic="fractions" data-color="green">
+        <span class="topic-icon">&#127829;</span>
+        <span class="topic-name">Fractions &amp; %</span>
+        <span class="topic-desc">Operations &amp; percentage</span>
+      </button>
+      <button class="topic-btn" data-topic="ratio" data-color="yellow">
+        <span class="topic-icon">&#9878;&#65039;</span>
+        <span class="topic-name">Ratio</span>
+        <span class="topic-desc">Ratio &amp; proportion</span>
+      </button>
+      <button class="topic-btn" data-topic="speed" data-color="red">
+        <span class="topic-icon">&#128640;</span>
+        <span class="topic-name">Speed</span>
+        <span class="topic-desc">Distance, time &amp; speed</span>
+      </button>
+      <button class="topic-btn" data-topic="geometry" data-color="pink">
+        <span class="topic-icon">&#128208;</span>
+        <span class="topic-name">Geometry</span>
+        <span class="topic-desc">Angles, shapes &amp; area</span>
+      </button>
+    </div>
+
+    <div style="margin-bottom:16px;">
+      <p style="font-size:0.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;text-align:center;">Difficulty</p>
+      <div class="difficulty-row">
+        <button class="diff-btn" data-diff="easy">&#127807; Easy</button>
+        <button class="diff-btn selected" data-diff="medium">&#128293; Medium</button>
+        <button class="diff-btn" data-diff="hard">&#128128; Hard</button>
+      </div>
+    </div>
+
+    <button class="start-btn" id="startBtn">START CHALLENGE &#128640;</button>
+  </div>
+
+  <!-- ── GAME SCREEN ── -->
+  <div id="game" class="screen">
+    <div class="hud">
+      <div class="hud-pill">&#11088; <span id="scoreDisplay">0</span></div>
+      <!--
+        FIX: r, cx, cy are SVG *presentation attributes*, not CSS properties.
+        They must be set directly on the element, not in a stylesheet.
+      -->
+      <div class="timer-ring">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle class="bg-ring" r="26" cx="32" cy="32"/>
+          <circle class="fg-ring" r="26" cx="32" cy="32" id="timerArc"/>
+        </svg>
+        <div class="timer-num" id="timerNum" aria-live="polite">15</div>
+      </div>
+      <div class="hud-pill">Q <span id="qNum">1</span>/10</div>
+    </div>
+
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="10">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-topic" id="qTopic">ALGEBRA</div>
+      <div class="q-text"  id="qText">Loading...</div>
+      <div class="q-hint"  id="qHint"></div>
+    </div>
+
+    <div class="options-grid" id="optionsGrid"></div>
+    <div class="feedback-bar" id="feedbackBar" aria-live="polite"></div>
+  </div>
+
+  <!-- ── RESULT SCREEN ── -->
+  <div id="result" class="screen">
+    <span class="result-emoji" id="resultEmoji" aria-hidden="true">&#127942;</span>
+    <div class="result-title" id="resultTitle">Amazing!</div>
+    <div class="result-score" id="resultScore">You scored 0 / 10</div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-num" id="statCorrect" style="color:var(--accent4)">0</span>
+        <span class="stat-label">Correct &#10003;</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="statStreak" style="color:var(--accent5)">0</span>
+        <span class="stat-label">Best Streak &#128293;</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num" id="statAvg" style="color:var(--accent3)">0s</span>
+        <span class="stat-label">Avg Time &#9889;</span>
+      </div>
+    </div>
+
+    <div class="review-section">
+      <h3>&#128221; Review</h3>
+      <div id="reviewList"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" id="homeBtn">&larr; Topics</button>
+      <button class="btn-primary"   id="replayBtn">PLAY AGAIN &#127919;</button>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<script>
+'use strict';
+
+// ─── CONSTANTS ────────────────────────────────────────────────────────────────
+
+/**
+ * Seconds allowed per difficulty level.
+ * Single source of truth — referenced everywhere instead of repeating literals.
+ */
+const MAX_TIME = Object.freeze({ easy: 20, medium: 15, hard: 10 });
+
+const TOTAL_QUESTIONS = 10;
+
+/**
+ * Circumference of the SVG timer arc ring.
+ * Derived from the circle's radius (r = 26): C = 2 * PI * r
+ */
+const ARC_LENGTH = 2 * Math.PI * 26; // ≈ 163.4
+
+// ─── QUESTION BANK ────────────────────────────────────────────────────────────
+// All questions are aligned to the MOE 2021 Primary 6 Standard Mathematics
+// syllabus (updated October 2025), covering topics from Sonia's schedule:
+//   Algebra · Fractions & Percentage · Ratio · Speed · Geometry
+//
+// Schema per entry:
+//   d     {string}   difficulty — 'easy' | 'medium' | 'hard'
+//   q     {string}   question text
+//   opts  {string[]} exactly 4 answer choices
+//   ans   {number}   0-based index of the correct choice in opts[]
+//   topic {string}   display label shown during the game
+//   hint  {string}   shown after a wrong answer or timeout
+
+const QUESTIONS = {
+
+  algebra: [
+    // ── easy ──
+    { d:'easy', q:'If a = 5, what is the value of 3a + 2?',
+      opts:['17','13','15','20'], ans:0, topic:'Algebra',
+      hint:'3a means 3 \u00d7 a; so 3 \u00d7 5 + 2' },
+    { d:'easy', q:'Simplify: 4a + 2a',
+      opts:['6a','8a','4a\u00b2','2a'], ans:0, topic:'Algebra',
+      hint:'Add the coefficients: 4 + 2 = 6' },
+    { d:'easy', q:'If n = 4, what is 2n \u2212 3?',
+      opts:['5','11','8','3'], ans:0, topic:'Algebra',
+      hint:'2 \u00d7 4 = 8, then subtract 3' },
+    { d:'easy', q:'Which expression means "3 more than twice y"?',
+      opts:['2y + 3','3y + 2','y + 3','2y \u2212 3'], ans:0, topic:'Algebra',
+      hint:'"Twice y" means 2y; "3 more" means + 3' },
+    // ── medium ──
+    { d:'medium', q:'Simplify: 5b + 3 \u2212 2b + 7',
+      opts:['3b + 10','7b + 10','3b + 4','7b + 4'], ans:0, topic:'Algebra',
+      hint:'Group like terms: (5b \u2212 2b) + (3 + 7)' },
+    { d:'medium', q:'If 3x = 24, what is x?',
+      opts:['8','6','9','7'], ans:0, topic:'Algebra',
+      hint:'Divide both sides by 3' },
+    { d:'medium', q:'Sam has k stickers. Tom has 3 times as many. Together they have 48. Which equation is correct?',
+      opts:['4k = 48','3k = 48','k + 3 = 48','k + 3k + 3 = 48'], ans:0, topic:'Algebra',
+      hint:'Sam: k  Tom: 3k  Total: k + 3k = 4k' },
+    { d:'medium', q:'Solve: 2m + 5 = 17',
+      opts:['m = 6','m = 11','m = 7','m = 9'], ans:0, topic:'Algebra',
+      hint:'Subtract 5 from both sides first, then divide by 2' },
+    { d:'medium', q:'If a \u00f7 3 = 7, what is a?',
+      opts:['21','10','14','4'], ans:0, topic:'Algebra',
+      hint:'Multiply both sides by 3' },
+    // ── hard ──
+    { d:'hard', q:'A box has n apples. After adding 12 more the total is 3n. Find n.',
+      opts:['6','4','8','12'], ans:0, topic:'Algebra',
+      hint:'Set up: n + 12 = 3n \u2192 12 = 2n' },
+    { d:'hard', q:'The perimeter of a rectangle is 56 cm. Its length is (2x + 3) cm and width is x cm. Find x.',
+      opts:['\u22487.8','10','\u22486.3','9'], ans:0, topic:'Algebra',
+      hint:'2(2x + 3 + x) = 56 \u2192 6x + 6 = 56' },
+    { d:'hard', q:'Simplify: 6c \u2212 2(c + 4)',
+      opts:['4c \u2212 8','4c + 8','8c \u2212 8','6c \u2212 8'], ans:0, topic:'Algebra',
+      hint:'Expand: 2(c + 4) = 2c + 8, then subtract' },
+  ],
+
+  fractions: [
+    // ── easy ──
+    { d:'easy', q:'What is \u00bd + \u00bc?',
+      opts:['\u00be','\u00bc','\u2154','1'], ans:0, topic:'Fractions',
+      hint:'Convert to a common denominator of 4' },
+    { d:'easy', q:'What is \u2157 of 40?',
+      opts:['24','20','30','16'], ans:0, topic:'Fractions',
+      hint:'3/5 \u00d7 40 = (3 \u00d7 40) \u00f7 5' },
+    { d:'easy', q:'Express 75% as a fraction in its simplest form.',
+      opts:['\u00be','7/10','75/100','\u00bc'], ans:0, topic:'Percentage',
+      hint:'75/100 \u2014 divide both by 25' },
+    { d:'easy', q:'What is 20% of 150?',
+      opts:['30','15','45','25'], ans:0, topic:'Percentage',
+      hint:'20/100 \u00d7 150 = 0.2 \u00d7 150' },
+    // ── medium ──
+    { d:'medium', q:'A shirt costs $80 after a 20% discount. What was the original price?',
+      opts:['$100','$96','$64','$90'], ans:0, topic:'Percentage',
+      hint:'$80 = 80% of the original; divide by 0.8' },
+    { d:'medium', q:'What is \u2153 \u00f7 4? (Note: \u2153 = 2/3)',
+      opts:['\u2159','8/3','2/12','3/8'], ans:0, topic:'Fractions',
+      hint:'Dividing by 4 = multiplying by \u00bc' },
+    { d:'medium', q:'A price increased from $50 to $60. What is the percentage increase?',
+      opts:['20%','10%','25%','15%'], ans:0, topic:'Percentage',
+      hint:'Increase ($10) \u00f7 original ($50) \u00d7 100%' },
+    { d:'medium', q:'What is 1\u00be \u00d7 8?',
+      opts:['14','12','16','10'], ans:0, topic:'Fractions',
+      hint:'Convert 1\u00be to an improper fraction: 7/4, then \u00d7 8' },
+    { d:'medium', q:'A class has 30 students. 2/5 are girls. How many boys are there?',
+      opts:['18','12','15','6'], ans:0, topic:'Fractions',
+      hint:'Girls = 2/5 \u00d7 30 = 12; Boys = 30 \u2212 12' },
+    // ── hard ──
+    { d:'hard', q:'After spending \u215c of his money, Ali had $120 left. How much did he start with?',
+      opts:['$192','$160','$45','$168'], ans:0, topic:'Fractions',
+      hint:'$120 = 5/8 of total; total = $120 \u00f7 5 \u00d7 8' },
+    { d:'hard', q:'Find the GST (9%) on a $240 purchase.',
+      opts:['$21.60','$24.00','$18.00','$19.20'], ans:0, topic:'Percentage',
+      hint:'9% of $240 = 9/100 \u00d7 240' },
+    { d:'hard', q:'A population grew from 4 000 to 4 600. What is the percentage increase?',
+      opts:['15%','20%','12%','10%'], ans:0, topic:'Percentage',
+      hint:'Increase = 600; percentage = 600/4000 \u00d7 100%' },
+  ],
+
+  ratio: [
+    // ── easy ──
+    { d:'easy', q:'Simplify the ratio 12 : 8.',
+      opts:['3 : 2','4 : 3','6 : 4','2 : 3'], ans:0, topic:'Ratio',
+      hint:'Divide both sides by the HCF, which is 4' },
+    { d:'easy', q:'If a : b = 3 : 5 and a = 12, find b.',
+      opts:['20','15','18','10'], ans:0, topic:'Ratio',
+      hint:'3 parts = 12, so 1 part = 4; b = 5 \u00d7 4' },
+    { d:'easy', q:'Express \u00bd : \u2154 as a ratio of whole numbers.',
+      opts:['3 : 4','1 : 2','2 : 3','4 : 3'], ans:0, topic:'Ratio',
+      hint:'Multiply both sides by 6 (the LCM of 2 and 3)' },
+    // ── medium ──
+    { d:'medium', q:'Tom, Ben and Sara share $360 in ratio 2 : 3 : 4. How much does Sara get?',
+      opts:['$160','$80','$120','$180'], ans:0, topic:'Ratio',
+      hint:'Total parts = 9; Sara = 4/9 \u00d7 $360' },
+    { d:'medium', q:'The ratio of red to blue balls is 5 : 3. There are 24 blue balls. How many red balls are there?',
+      opts:['40','30','15','36'], ans:0, topic:'Ratio',
+      hint:'3 parts = 24, so 1 part = 8; red = 5 \u00d7 8' },
+    { d:'medium', q:'A : B = 2 : 5 and B : C = 3 : 4. What is A : B : C?',
+      opts:['6 : 15 : 20','2 : 5 : 4','6 : 10 : 20','2 : 3 : 4'], ans:0, topic:'Ratio',
+      hint:'Scale both ratios so B is the same (LCM of 5 and 3 is 15)' },
+    { d:'medium', q:'What fraction of a 5 : 3 quantity does the smaller share represent?',
+      opts:['3/8','3/5','5/8','3/2'], ans:0, topic:'Ratio',
+      hint:'Total parts = 5 + 3 = 8; smaller share = 3 parts' },
+    // ── hard ──
+    { d:'hard', q:'Ali gives \u00bc of his money to Ben. Their ratio becomes 3 : 1. Ben ends up with $20. How much did Ali start with?',
+      opts:['$80','$60','$100','$120'], ans:0, topic:'Ratio',
+      hint:"After giving: Ali = $60 = \u00be of original \u2192 original = $60 \u00f7 3 \u00d7 4" },
+    { d:'hard', q:'Two containers hold water in ratio 7 : 4. After pouring 30 L from the larger to the smaller the ratio becomes 2 : 3. Find the original amount in the larger container.',
+      opts:['70 L','140 L','40 L','105 L'], ans:0, topic:'Ratio',
+      hint:'(7k \u2212 30) / (4k + 30) = 2/3; solve for k' },
+  ],
+
+  speed: [
+    // ── easy ──
+    { d:'easy', q:'A car travels 120 km in 2 hours. What is its speed?',
+      opts:['60 km/h','240 km/h','30 km/h','15 km/h'], ans:0, topic:'Speed',
+      hint:'Speed = Distance \u00f7 Time' },
+    { d:'easy', q:'A cyclist rides at 15 km/h for 3 hours. How far does she travel?',
+      opts:['45 km','5 km','18 km','12 km'], ans:0, topic:'Speed',
+      hint:'Distance = Speed \u00d7 Time' },
+    { d:'easy', q:'A runner covers 400 m at 8 m/s. How long does it take?',
+      opts:['50 s','32 s','3 200 s','200 s'], ans:0, topic:'Speed',
+      hint:'Time = Distance \u00f7 Speed' },
+    { d:'easy', q:'Which unit is correctly used for speed?',
+      opts:['km/h','km\u00b2','kg/h','m\u00b2/s'], ans:0, topic:'Speed',
+      hint:'Speed = distance per unit of time' },
+    // ── medium ──
+    { d:'medium', q:'Train A leaves at 8 am at 80 km/h. Train B leaves at 9 am in the same direction at 100 km/h. When does B catch up with A?',
+      opts:['1 pm','12 pm','11 am','2 pm'], ans:0, topic:'Speed',
+      hint:'At 9 am A has an 80 km head start. Closing speed = 20 km/h; time = 80 \u00f7 20 = 4 h after 9 am' },
+    { d:'medium', q:'A car travels 180 km at 60 km/h then 120 km at 80 km/h. What is the average speed for the whole journey?',
+      opts:['\u224866.7 km/h','70 km/h','65 km/h','72 km/h'], ans:0, topic:'Speed',
+      hint:'Total distance \u00f7 total time. Time\u2081 = 3 h, Time\u2082 = 1.5 h' },
+    { d:'medium', q:'Two towns are 250 km apart. Car P leaves Town A at 9 am at 50 km/h; Car Q leaves Town B at 9 am at 75 km/h towards each other. When do they meet?',
+      opts:['11 am','12 pm','10:30 am','1 pm'], ans:0, topic:'Speed',
+      hint:'Combined speed = 125 km/h; time = 250 \u00f7 125 = 2 h after 9 am' },
+    { d:'medium', q:'John jogs at 9 km/h. How many minutes does he need to jog 6 km?',
+      opts:['40 min','54 min','30 min','66 min'], ans:0, topic:'Speed',
+      hint:'Time = 6 \u00f7 9 hours; convert to minutes by \u00d7 60' },
+    // ── hard ──
+    { d:'hard', q:'Sam cycled to school at 12 km/h and returned at 8 km/h. What was his average speed for the whole trip?',
+      opts:['9.6 km/h','10 km/h','10.5 km/h','9 km/h'], ans:0, topic:'Speed',
+      hint:'Harmonic mean: 2 \u00d7 (s\u2081 \u00d7 s\u2082) \u00f7 (s\u2081 + s\u2082)' },
+    { d:'hard', q:'A car covered \u2157 of a journey in 1.5 h, then drove the rest at 60 km/h taking 40 min. What was its speed for the first part?',
+      opts:['40 km/h','50 km/h','60 km/h','48 km/h'], ans:0, topic:'Speed',
+      hint:'Rest (2/5) = 60 \u00d7 (40/60) = 40 km \u2192 total = 100 km \u2192 first part = 60 km in 1.5 h' },
+  ],
+
+  geometry: [
+    // ── easy ──
+    { d:'easy', q:'What is the sum of the interior angles of a triangle?',
+      opts:['180\u00b0','360\u00b0','90\u00b0','270\u00b0'], ans:0, topic:'Geometry',
+      hint:'A fundamental property of all triangles' },
+    { d:'easy', q:'A rectangle has length 12 cm and width 7 cm. What is its area?',
+      opts:['84 cm\u00b2','38 cm\u00b2','76 cm\u00b2','19 cm\u00b2'], ans:0, topic:'Area',
+      hint:'Area = length \u00d7 width' },
+    { d:'easy', q:'What is the area of a triangle with base 10 cm and height 8 cm?',
+      opts:['40 cm\u00b2','80 cm\u00b2','18 cm\u00b2','16 cm\u00b2'], ans:0, topic:'Area',
+      hint:'Area = \u00bd \u00d7 base \u00d7 height' },
+    { d:'easy', q:'A square has side 9 cm. What is its perimeter?',
+      opts:['36 cm','81 cm','18 cm','27 cm'], ans:0, topic:'Area',
+      hint:'Perimeter = 4 \u00d7 side length' },
+    // ── medium ──
+    { d:'medium', q:'Find the circumference of a circle with radius 7 cm. (Use \u03c0 \u2248 22/7)',
+      opts:['44 cm','154 cm','22 cm','88 cm'], ans:0, topic:'Circles',
+      hint:'C = 2\u03c0r = 2 \u00d7 (22/7) \u00d7 7' },
+    { d:'medium', q:'Find the area of a circle with radius 7 cm. (Use \u03c0 \u2248 22/7)',
+      opts:['154 cm\u00b2','44 cm\u00b2','49 cm\u00b2','308 cm\u00b2'], ans:0, topic:'Circles',
+      hint:'A = \u03c0r\u00b2 = (22/7) \u00d7 49' },
+    { d:'medium', q:'In triangle PQR, \u2220P = 65\u00b0 and \u2220Q = 72\u00b0. Find \u2220R.',
+      opts:['43\u00b0','37\u00b0','53\u00b0','47\u00b0'], ans:0, topic:'Geometry',
+      hint:'Angle sum = 180\u00b0; R = 180 \u2212 65 \u2212 72' },
+    { d:'medium', q:'A cuboid is 8 cm \u00d7 5 cm \u00d7 4 cm. What is its volume?',
+      opts:['160 cm\u00b3','240 cm\u00b3','100 cm\u00b3','80 cm\u00b3'], ans:0, topic:'Volume',
+      hint:'Volume = length \u00d7 width \u00d7 height' },
+    { d:'medium', q:'A cube has side length 6 cm. What is its volume?',
+      opts:['216 cm\u00b3','36 cm\u00b3','72 cm\u00b3','108 cm\u00b3'], ans:0, topic:'Volume',
+      hint:'V = side\u00b3 = 6 \u00d7 6 \u00d7 6' },
+    // ── hard ──
+    { d:'hard', q:'A semicircle has diameter 14 cm. Find its perimeter. (Use \u03c0 \u2248 22/7)',
+      opts:['36 cm','44 cm','50 cm','28 cm'], ans:0, topic:'Circles',
+      hint:'Perimeter = half-circumference + diameter = \u03c0r + 2r = 22 + 14' },
+    { d:'hard', q:'A rectangle has perimeter 60 cm and its length is twice its width. Find its area.',
+      opts:['200 cm\u00b2','300 cm\u00b2','120 cm\u00b2','100 cm\u00b2'], ans:0, topic:'Area',
+      hint:'2(2w + w) = 60 \u2192 w = 10, l = 20; Area = 10 \u00d7 20' },
+    { d:'hard', q:'A rectangular water tank (50 cm \u00d7 30 cm \u00d7 20 cm) is \u00be full. How many litres does it hold? (1 L = 1 000 cm\u00b3)',
+      opts:['22.5 L','30 L','15 L','24 L'], ans:0, topic:'Volume',
+      hint:'Total volume = 30 000 cm\u00b3; \u00be \u00d7 30 000 \u00f7 1 000' },
+  ],
+
+};
+
+// ─── GAME STATE ───────────────────────────────────────────────────────────────
+// All mutable state lives in one object — no loose globals.
+
+const Game = {
+  topic:      'mixed',
+  difficulty: 'medium',
+  questions:  [],
+  current:    0,
+  score:      0,
+  streak:     0,
+  bestStreak: 0,
+  totalTime:  0,
+  answered:   false,
+  history:    [],   // [{ q, userAns, correct, correctAns, topic }]
+  timer:      null,
+  timeLeft:   0,
+};
+
+// ─── DOM HELPERS ─────────────────────────────────────────────────────────────
+
+const $id = id => document.getElementById(id);
+
+// Cache frequently-accessed elements once at startup.
+const Dom = {
+  scoreDisplay: $id('scoreDisplay'),
+  timerArc:     $id('timerArc'),
+  timerNum:     $id('timerNum'),
+  qNum:         $id('qNum'),
+  qTopic:       $id('qTopic'),
+  qText:        $id('qText'),
+  qHint:        $id('qHint'),
+  progressFill: $id('progressFill'),
+  optionsGrid:  $id('optionsGrid'),
+  feedbackBar:  $id('feedbackBar'),
+  resultEmoji:  $id('resultEmoji'),
+  resultTitle:  $id('resultTitle'),
+  resultScore:  $id('resultScore'),
+  statCorrect:  $id('statCorrect'),
+  statStreak:   $id('statStreak'),
+  statAvg:      $id('statAvg'),
+  reviewList:   $id('reviewList'),
+};
+
+// ─── UTILITIES ────────────────────────────────────────────────────────────────
+
+/**
+ * Fisher-Yates shuffle.
+ * FIX: replaces the statistically biased array.sort(() => Math.random() - 0.5).
+ * Returns a new array; does not mutate the input.
+ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/**
+ * Escape a string for safe insertion into an HTML context.
+ * FIX: prevents XSS when user-provided strings are reflected into the review
+ * panel. Although this app has no server round-trip, it is good practice to
+ * always sanitise before using innerHTML.
+ */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,  '&amp;')
+    .replace(/</g,  '&lt;')
+    .replace(/>/g,  '&gt;')
+    .replace(/"/g,  '&quot;')
+    .replace(/'/g,  '&#39;');
+}
+
+/** Returns the allowed seconds for the current difficulty. */
+function getMaxTime() {
+  return MAX_TIME[Game.difficulty];
+}
+
+// ─── SCREEN NAVIGATION ───────────────────────────────────────────────────────
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.toggle('active', s.id === id);
+  });
+}
+
+// ─── EVENT WIRING ────────────────────────────────────────────────────────────
+
+document.querySelectorAll('.topic-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    Game.topic = btn.dataset.topic;
+  });
+});
+
+document.querySelectorAll('.diff-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    Game.difficulty = btn.dataset.diff;
+  });
+});
+
+$id('startBtn').addEventListener('click',  startGame);
+$id('replayBtn').addEventListener('click', startGame);  // FIX: directly reuses current Game.topic / Game.difficulty
+$id('homeBtn').addEventListener('click', () => {
+  clearGameTimer();
+  showScreen('home');
+});
+
+// ─── QUESTION POOL ────────────────────────────────────────────────────────────
+
+function buildPool() {
+  const diff   = Game.difficulty;
+  const topics = Game.topic === 'mixed' ? Object.keys(QUESTIONS) : [Game.topic];
+  const pool   = [];
+
+  topics.forEach(t => {
+    (QUESTIONS[t] || []).forEach(q => {
+      if (diff === 'easy'   && q.d === 'easy')                       pool.push(q);
+      if (diff === 'medium' && (q.d === 'easy' || q.d === 'medium')) pool.push(q);
+      if (diff === 'hard')                                            pool.push(q);
+    });
+  });
+
+  return shuffle(pool).slice(0, TOTAL_QUESTIONS);
+}
+
+// ─── GAME LIFECYCLE ───────────────────────────────────────────────────────────
+
+function startGame() {
+  Object.assign(Game, {
+    questions:  buildPool(),
+    current:    0,
+    score:      0,
+    streak:     0,
+    bestStreak: 0,
+    totalTime:  0,
+    answered:   false,
+    history:    [],
+  });
+  showScreen('game');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  clearGameTimer();
+  Game.answered = false;
+
+  const q = Game.questions[Game.current];
+
+  Dom.qTopic.textContent        = q.topic.toUpperCase();
+  Dom.qText.textContent         = q.q;
+  Dom.qHint.textContent         = '';
+  Dom.qNum.textContent          = Game.current + 1;
+  Dom.scoreDisplay.textContent  = Game.score;
+  Dom.feedbackBar.textContent   = '';
+  Dom.feedbackBar.className     = 'feedback-bar';
+  Dom.progressFill.style.width  = (Game.current / TOTAL_QUESTIONS * 100) + '%';
+
+  // Build answer option buttons
+  Dom.optionsGrid.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className   = 'opt-btn';
+    btn.textContent = opt;
+    btn.addEventListener('click', () => selectAnswer(i));
+    Dom.optionsGrid.appendChild(btn);
+  });
+
+  // Start countdown timer
+  Game.timeLeft = getMaxTime();
+  updateTimerDisplay();
+
+  Game.timer = setInterval(() => {
+    Game.timeLeft--;
+    updateTimerDisplay();
+    if (Game.timeLeft <= 0) {
+      clearGameTimer();
+      handleTimeout();
+    }
+  }, 1000);
+}
+
+// ─── TIMER ────────────────────────────────────────────────────────────────────
+
+function clearGameTimer() {
+  if (Game.timer !== null) {
+    clearInterval(Game.timer);
+    Game.timer = null;
+  }
+}
+
+function updateTimerDisplay() {
+  const frac   = Game.timeLeft / getMaxTime();
+  const offset = ARC_LENGTH * (1 - frac);
+
+  Dom.timerArc.style.strokeDashoffset = offset;
+  Dom.timerArc.style.stroke =
+    frac > 0.5  ? 'var(--accent4)' :   // green
+    frac > 0.25 ? 'var(--accent5)' :   // yellow
+                  'var(--accent2)';    // red
+
+  Dom.timerNum.textContent = Game.timeLeft;
+}
+
+// ─── ANSWER HANDLING ─────────────────────────────────────────────────────────
+
+function selectAnswer(idx) {
+  if (Game.answered) return;
+  Game.answered = true;
+  clearGameTimer();
+
+  const q       = Game.questions[Game.current];
+  const correct = (idx === q.ans);
+  const btns    = document.querySelectorAll('.opt-btn');
+
+  btns.forEach(b => { b.disabled = true; });
+  btns[q.ans].classList.add('correct');
+
+  // FIX: timeUsed is computed here and added to totalTime.
+  // The old `timeTaken` variable was incremented but never read — removed.
+  const timeUsed = getMaxTime() - Game.timeLeft;
+  Game.totalTime += timeUsed;
+
+  if (correct) {
+    btns[idx].classList.add('correct');
+    Game.streak++;
+    if (Game.streak > Game.bestStreak) Game.bestStreak = Game.streak;
+
+    const speedBonus = Math.max(0, Math.floor((Game.timeLeft / getMaxTime()) * 5));
+    Game.score += 10 + speedBonus;
+    Dom.scoreDisplay.textContent = Game.score;
+
+    Dom.feedbackBar.className   = 'feedback-bar correct';
+    Dom.feedbackBar.textContent = Game.streak >= 3
+      ? `\uD83D\uDD25 ${Game.streak} in a row! +${10 + speedBonus} pts`
+      : `\u2705 Correct! +${10 + speedBonus} pts`;
+
+    if (Game.streak === 3) showCombo('3\u00d7 COMBO! \uD83D\uDD25');
+    if (Game.streak === 5) showCombo('5\u00d7 STREAK! \uD83C\uDF1F');
+    if (Game.streak === 7) showCombo('ON FIRE! \uD83D\uDCA5');
+
+  } else {
+    btns[idx].classList.add('wrong');
+    Game.streak = 0;
+
+    Dom.feedbackBar.className   = 'feedback-bar wrong';
+    Dom.feedbackBar.textContent = `\u274C The answer is: ${q.opts[q.ans]}`;
+
+    setTimeout(() => {
+      Dom.qHint.textContent = `\uD83D\uDCA1 Hint: ${q.hint}`;
+    }, 200);
+  }
+
+  Game.history.push({
+    q:          q.q,
+    userAns:    q.opts[idx],
+    correct,
+    correctAns: q.opts[q.ans],
+    topic:      q.topic,
+  });
+
+  setTimeout(nextQuestion, 1800);
+}
+
+function handleTimeout() {
+  Game.answered = true;
+  const q    = Game.questions[Game.current];
+  const btns = document.querySelectorAll('.opt-btn');
+
+  btns.forEach(b => { b.disabled = true; });
+  btns[q.ans].classList.add('reveal');
+  Game.streak = 0;
+
+  Dom.feedbackBar.className   = 'feedback-bar timeout';
+  Dom.feedbackBar.textContent = `\u23F0 Time\'s up! Answer: ${q.opts[q.ans]}`;
+  Dom.qHint.textContent       = `\uD83D\uDCA1 ${q.hint}`;
+
+  // Full time is charged for a timeout
+  Game.totalTime += getMaxTime();
+
+  Game.history.push({
+    q:          q.q,
+    userAns:    'No answer',
+    correct:    false,
+    correctAns: q.opts[q.ans],
+    topic:      q.topic,
+  });
+
+  setTimeout(nextQuestion, 2000);
+}
+
+function nextQuestion() {
+  Game.current++;
+  if (Game.current >= TOTAL_QUESTIONS) {
+    endGame();
+  } else {
+    renderQuestion();
+  }
+}
+
+// ─── COMBO FLASH ─────────────────────────────────────────────────────────────
+
+function showCombo(text) {
+  const el = document.createElement('div');
+  el.className   = 'combo-flash';
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+// ─── END GAME ─────────────────────────────────────────────────────────────────
+
+function endGame() {
+  clearGameTimer();
+
+  const correct = Game.history.filter(h => h.correct).length;
+  const pct     = Math.round(correct / TOTAL_QUESTIONS * 100);
+  const avgTime = Math.round(Game.totalTime / TOTAL_QUESTIONS);
+
+  const [emoji, title] =
+    pct === 100 ? ['\uD83C\uDFC6', 'PERFECT!']    :
+    pct >=  80  ? ['\uD83C\uDF1F', 'Excellent!']  :
+    pct >=  60  ? ['\uD83D\uDC4D', 'Well Done!']  :
+    pct >=  40  ? ['\uD83D\uDCAA', 'Keep Going!'] :
+                  ['\uD83D\uDCDA', 'Study More!'];
+
+  Dom.resultEmoji.textContent = emoji;
+  Dom.resultTitle.textContent = title;
+  Dom.resultScore.textContent =
+    `You scored ${correct} / ${TOTAL_QUESTIONS} \u00b7 ${Game.score} points`;
+  Dom.statCorrect.textContent = correct;
+  Dom.statStreak.textContent  = Game.bestStreak;
+  Dom.statAvg.textContent     = avgTime + 's';
+
+  // Build review list using DOM methods instead of innerHTML interpolation.
+  // FIX: avoids XSS risk from injecting question/answer strings into innerHTML.
+  Dom.reviewList.innerHTML = '';
+
+  Game.history.forEach(h => {
+    const item = document.createElement('div');
+    item.className = 'review-item';
+
+    const icon = document.createElement('span');
+    icon.className   = 'review-icon';
+    icon.textContent = h.correct ? '\u2705' : '\u274C';
+
+    const body  = document.createElement('div');
+    const qLine = document.createElement('div');
+    qLine.className   = 'review-q';
+    qLine.textContent = h.q;
+
+    const aLine = document.createElement('div');
+    aLine.className = 'review-ans';
+
+    if (h.correct) {
+      aLine.textContent = 'Correct!';
+    } else {
+      aLine.textContent = `Your answer: ${escapeHtml(h.userAns)} \u00b7 Correct: `;
+      const mark = document.createElement('span');
+      mark.className   = 'correct-ans';
+      mark.textContent = h.correctAns;
+      aLine.appendChild(mark);
+    }
+
+    body.appendChild(qLine);
+    body.appendChild(aLine);
+    item.appendChild(icon);
+    item.appendChild(body);
+    Dom.reviewList.appendChild(item);
+  });
+
+  Dom.progressFill.style.width = '100%';
+  showScreen('result');
+}
+</script>
+</body>
+</html>
